@@ -1,0 +1,221 @@
+const express = require('express');
+const router = express.Router();
+let Subscription = require('../entity/subcription').Subscription;
+const Subscriber = require('../entity/subscribers').Subscriber;
+const Response = require('../config/response')
+const isAuth = require('../middleware/is-auth')
+const User = require('../entity/user').User;
+const fs = require("fs");
+const path = require("path");
+const puppeteer = require('puppeteer');
+const handlebars = require("handlebars");
+
+/**
+ * Subscribers
+ * @purpose: This Rest API  used to  get Subscriber list
+ * @method: GET
+ */
+router.get("/list", isAuth, (req, res, next) => {
+    let query = {}
+    if (req.query.adminId)
+        query.givenBy = req.query.adminId
+    if (req.query.active)
+        query.active = req.query.active
+    Subscription.find(query, (err, suceess) => {
+        if (err) {
+            console.log('error ', err);
+            res.sendStatus(500);
+        } else if (suceess) {
+            response = Response.createResponse(Response.RequestStatus.Success, "subcription list", suceess);
+            res.status(200).json(response);
+        } else {
+            response = Response.createResponse(Response.RequestStatus.Success, "No subcription found.", []);
+            res.status(200).json(response);
+        }
+    })
+})
+/**
+ * subscriber
+ * @purpose: This Rest API  used to  get subscriber list
+ * @method: POST
+ */
+router.post("/", isAuth, (req, res, next) => {
+    let subscriberId = req.body.subscriberId;
+    let plans = req.body.plans;
+    if (subscriberId && plans.length > 0 && req.body.createdBy) {
+        Subscriber.countDocuments({ _id: subscriberId }, function (err, count) {
+            if (err) {
+                res.sendStatus(500);
+            } else if (count == 0) {
+                let response = Response.createResponse(Response.RequestStatus.Fail, 'User is not registered. Please register user first.');
+                res.json(200, response);
+            } else {
+                Subscription.collection.insert(plans, function (err, docs) {
+                    if (err) {
+                        return console.error(err);
+                    } else {
+                        let update = {}
+                        update.active = true;
+                        User.findById(req.body.createdBy, (error, c) => {
+                            if (error) {
+                                res.sendStatus(500).json(error);
+                            } else {
+                                Subscriber.findByIdAndUpdate(subscriberId, update, (err, result) => {
+                                    if (err) {
+                                        res.sendStatus(500).json(err);
+                                    } else {
+                                        if (req.body.createdBy) {
+                                            let reqData = {}
+                                            if (c.isSuperAdmin) {
+                                                c.depositAmount = c.depositAmount ? c.depositAmount : 0;
+                                                reqData = {
+                                                    depositAmount: c.depositAmount + req.body.totalAmount
+                                                }
+                                            } else {
+                                                reqData = {
+                                                    pendingAmount: c.pendingAmount + req.body.totalAmount
+                                                }
+                                            }
+                                            User.findByIdAndUpdate(req.body.createdBy, reqData, function (err, result) {
+                                                if (err) {
+                                                    res.sendStatus(500);
+                                                } else {
+                                                    response = Response.createResponse(Response.RequestStatus.Success, "Subcription Activated.");
+                                                    res.status(200).json(response);
+                                                }
+                                            });
+                                        }
+
+                                    }
+                                })
+                            }
+                        })
+                    }
+                });
+
+
+            }
+        });
+    } else {
+        res.sendStatus(400);
+    }
+})
+/**
+ * deactivateSubcription
+ * @purpose: This Rest API  used to  get users list
+ * @method: POST
+ */
+router.post("/deactive", isAuth, (req, res, next) => {
+    if (req.body._id) {
+        req.body.updateDate = new Date().getTime();
+        req.body.active = false;
+        Subscription.findByIdAndUpdate(req.body._id, req.body, (err, results) => {
+            if (err) {
+                let response = Response.createResponse(0, err.message);
+                res.status(500).json(response);
+            } else {
+                let message = "Subcription Deactivated Successfully";
+                let response = Response.createResponse(Response.RequestStatus.Success, message);
+                res.status(200).json(response);
+            }
+        });
+    } else {
+        res.sendStatus(400);
+    }
+})
+/**
+ * Subscribers
+ * @purpose: This Rest API  used to  get Subscriber list
+ * @method: GET
+ */
+router.post("/list/address", isAuth, async function (req, res, next) {
+    let query = {}
+    if (req.body.admin) {
+        query.createdBy = req.body.admin
+    }
+    if (req.body.state)
+        query.state = req.body.state
+    if (req.body.city)
+        query.city = req.body.city
+    if (req.body.bookId)
+        query.bookId = req.body.bookId
+    if (req.body.startDate && req.body.endDate) {
+        query.updateDate = {
+            $gte: req.body.startDate,
+            $lt: req.body.endDate
+        }
+    }
+    query.active = true
+    console.log(query)
+    var suceess = await Subscription.find(query);
+    console.log(suceess.length)
+        let temp = [];
+        suceess.forEach(res => {
+            if (res.deliveryAddress.fatherName && res.deliveryAddress.fatherName.trim() !== '.') {
+                res.deliveryAddress.name = res.deliveryAddress.name + ' S % ' + res.deliveryAddress.fatherName;
+            }
+            if (res.deliveryAddress.address.includes("#")) {
+                res.deliveryAddress.address = res.deliveryAddress.address.replace(/#/g, "");
+            }
+            res.deliveryAddress.address = res.deliveryAddress.address.replace(/['"]+/g, '')
+            temp.push(res.deliveryAddress)
+        })
+        const pdfData = {
+            name: "address",
+            date: new Date(),
+            collection: temp
+        }
+        const pdfPath = await createPDF(pdfData);
+        console.log('write  file done' + pdfPath)
+        var file = fs.createReadStream(pdfPath);
+        var stat = fs.statSync(pdfPath);
+        res.setHeader('Content-Length', stat.size);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
+        file.pipe(res);
+  
+})
+async function createPDF(data) {
+    console.log('started file' + data.collection.length)
+    var templateHtml = fs.readFileSync(path.join(process.cwd(), 'template.html'), 'utf8');
+    var template = handlebars.compile(templateHtml);
+    var html = template(data);
+    console.log('read html')
+
+    var milis = new Date();
+    milis = milis.getTime();
+    console.log('time')
+
+    var pdfPath = path.join('pdf', `${data.name}-${milis}.pdf`);
+    console.log('pdf path' + pdfPath)
+
+    var options = {
+        width: '1230px',
+        headerTemplate: "<p></p>",
+        footerTemplate: "<p></p>",
+        displayHeaderFooter: true,
+        margin: {
+            top: "10px",
+            bottom: "30px"
+        },
+        printBackground: true,
+        path: pdfPath
+    }
+
+    const browser = await puppeteer.launch({
+        args: ['--no-sandbox'],
+        headless: true
+    });
+    console.log("file writing stared")
+    var page = await browser.newPage();
+    console.log("created page" + page)
+    await page.goto(`data:text/html;charset=UTF-8,${html}`, {
+        waitUntil: 'networkidle0'
+    });
+
+    await page.pdf(options);
+    await browser.close();
+    console.log("File Created Suceesfully")
+    return pdfPath;
+}
+module.exports = router;

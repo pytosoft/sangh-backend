@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Address List</title>
+
+	<head>
+		<style type="text/css">
+.page-header, .page-header-space {
+  height: 50px;
+}
+
+.page-footer, .page-footer-space {
+  height: 40px;
+
+}
+.card {
+				width: 200px;
+				background-color: rgb(255, 255, 255);
+				border-radius: 15px;
+				box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+				padding: 5px;
+				margin: 10px;
+                                margin-top:5px;
+				display: inline-block;
+				border: 1px solid rgb(128 128 128);
+				border-style: dashed;
+				font-size: 16px;
+			}
+
+.page-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid black; /* for demo */
+}
+
+.page-header {
+  position: fixed;
+  top: 0mm;
+  width: 100%;
+  border-bottom: 1px solid black; /* for demo */
+}
+
+.page {
+  page-break-after: always;
+  margin-top: 10px;
+margin-bottom: 10px
+}
+
+@page {
+  margin: 3mm
+}
+
+@media print {
+   thead {display: table-header-group;} 
+   tfoot {display: table-footer-group;}
+   
+   button {display: none;}
+   
+   body {margin: 0;}
+}
+		</style>
+		<meta charset="utf-8">
+	</head>
+
+<body>
+	<!-- <div class="report-header">
+		<h3>श्री क्षत्रिय युवक संघ <span class="right">{{date}}</span> </h3>
+	</div> -->
+			<div class="page">
+		{{#each collection}}
+		 <div class="card">
+			{{this.displayId}} <br>
+			{{this.name}} <br>
+			{{this.address}}<br>
+			{{this.city}} {{this.state}} - {{this.pinCode}}<br>
+			({{this.mobile}})<br>
+		</div>
+		{{/each}}
+	</div>
+
+	<!-- <div class="report-footer">
+		© Copyright © 2020 shrikys.org. All rights reserved.
+	</div> -->
+</body>
+
+</html>
+
+
+
+

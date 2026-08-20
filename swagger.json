@@ -1,0 +1,1413 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "KYS PORTAL",
+    "description": "KYS Application API",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "103.224.246.103:3004",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Users",
+      "description": "API for users in the system"
+    },
+    {
+      "name": "Subscribers",
+      "description": "API for subcribers in the system"
+    },
+    {
+      "name": "Subscription",
+      "description": "API for subscription in the system"
+    },
+    {
+      "name": "Plans",
+      "description": "API for plans in the system"
+    }
+  ],
+  "paths": {
+    "/user/list": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get all users in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
+    "/user": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Create new admin in system",
+        "parameters": [
+          {
+            "name": "admin",
+            "in": "body",
+            "description": "Admin that we want to create",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New user is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/user/getUserProfile/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Create new admin in system",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "get info user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New user is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/user/uploadProfilePic": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "upload Profile Pic",
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "Profile pic of user",
+            "type": "file"
+          },
+          {
+            "name": "userID",
+            "in": "formData",
+            "description": "",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New user is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/user/update": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Create new admin in system",
+        "parameters": [
+          {
+            "name": "admin",
+            "in": "body",
+            "description": "Admin that we want to create",
+            "schema": {
+              "$ref": "#/definitions/UpdateUser"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New user is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/user/deleteById": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Remove User in system",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New document is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "Login admin in system",
+        "parameters": [
+          {
+            "name": "admin",
+            "in": "body",
+            "description": "Admin that we want to create",
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Login Suceesfully",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/book/list": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "summary": "Get all books in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Books"
+            }
+          }
+        }
+      }
+    },
+    "/book": {
+      "post": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Create new book in system",
+        "parameters": [
+          {
+            "name": "attachment",
+            "in": "formData",
+            "description": "attachment",
+            "type": "file"
+          },
+          {
+            "name": "bookName",
+            "in": "formData",
+            "description": "bookName",
+            "type": "string"
+          },
+          {
+            "name": "pricing",
+            "in": "formData",
+            "description": "pricing",
+            "type": "number"
+          },
+          {
+            "name": "bookDetails",
+            "in": "formData",
+            "description": "bookDetails",
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "in": "formData",
+            "description": "category",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New book is created",
+            "schema": {
+              "$ref": "#/definitions/Books"
+            }
+          }
+        }
+      }
+    },
+    "/book/deleteById": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Remove Book in system",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New document is created",
+            "schema": {
+              "$ref": "#/definitions/Books"
+            }
+          }
+        }
+      }
+    },
+    "/book/update": {
+      "post": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Create new book in system",
+        "parameters": [
+          {
+            "name": "_id",
+            "in": "formData",
+            "description": "id",
+            "type": "string"
+          },
+          {
+            "name": "attachment",
+            "in": "formData",
+            "description": "attachment",
+            "type": "file"
+          },
+          {
+            "name": "bookName",
+            "in": "formData",
+            "description": "bookName",
+            "type": "string"
+          },
+          {
+            "name": "pricing",
+            "in": "formData",
+            "description": "pricing",
+            "type": "number"
+          },
+          {
+            "name": "bookDetails",
+            "in": "formData",
+            "description": "bookDetails",
+            "type": "string"
+          },
+          {
+            "name": "category",
+            "in": "formData",
+            "description": "category",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New book is created",
+            "schema": {
+              "$ref": "#/definitions/Books"
+            }
+          }
+        }
+      }
+    },
+    "/book/category/list": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "summary": "Get all type of book category",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Books"
+            }
+          }
+        }
+      }
+    },
+    "/book/category": {
+      "post": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Create new category in system",
+        "parameters": [
+          {
+            "name": "admin",
+            "in": "body",
+            "description": "create new category in system",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New book is created",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          }
+        }
+      }
+    },
+    "/book/category/deleteById": {
+      "get": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Remove Book in system",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New document is created",
+            "schema": {
+              "$ref": "#/definitions/Books"
+            }
+          }
+        }
+      }
+    },
+    "/book/category/update": {
+      "post": {
+        "tags": [
+          "Books"
+        ],
+        "description": "Create new book in system",
+        "parameters": [
+          {
+            "name": "admin",
+            "in": "body",
+            "description": "create new category in system",
+            "schema": {
+              "$ref": "#/definitions/UpdateCategory"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New book is created",
+            "schema": {
+              "$ref": "#/definitions/Books"
+            }
+          }
+        }
+      }
+    },
+    "/news/list": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "Get all news in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/news"
+            }
+          }
+        }
+      }
+    },
+    "/news": {
+      "post": {
+        "tags": [
+          "news"
+        ],
+        "description": "Create new news in system",
+        "parameters": [
+          {
+            "name": "attachment",
+            "in": "formData",
+            "description": "attachment",
+            "type": "file"
+          },
+          {
+            "name": "newsName",
+            "in": "formData",
+            "description": "newsName",
+            "type": "string"
+          },
+          {
+            "name": "companyName",
+            "in": "formData",
+            "description": "companyName",
+            "type": "string"
+          },
+          {
+            "name": "newsDetails",
+            "in": "formData",
+            "description": "newsDetails",
+            "type": "string"
+          },
+          {
+            "name": "active",
+            "in": "formData",
+            "description": "active",
+            "type": "boolean"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New news is created",
+            "schema": {
+              "$ref": "#/definitions/news"
+            }
+          }
+        }
+      }
+    },
+    "/news/deleteById": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "description": "Remove news in system",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New news is created",
+            "schema": {
+              "$ref": "#/definitions/news"
+            }
+          }
+        }
+      }
+    },
+    "/news/update": {
+      "post": {
+        "tags": [
+          "news"
+        ],
+        "description": "Create new news in system",
+        "parameters": [
+          {
+            "name": "attachment",
+            "in": "formData",
+            "description": "attachment",
+            "type": "file"
+          },
+          {
+            "name": "_id",
+            "in": "formData",
+            "description": "id",
+            "type": "string"
+          },
+          {
+            "name": "newsName",
+            "in": "formData",
+            "description": "newsName",
+            "type": "string"
+          },
+          {
+            "name": "companyName",
+            "in": "formData",
+            "description": "companyName",
+            "type": "string"
+          },
+          {
+            "name": "newsDetails",
+            "in": "formData",
+            "description": "newsDetails",
+            "type": "string"
+          },
+          {
+            "name": "active",
+            "in": "formData",
+            "description": "active",
+            "type": "boolean"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New news is created",
+            "schema": {
+              "$ref": "#/definitions/news"
+            }
+          }
+        }
+      }
+    },
+    "/subscriber/list": {
+      "get": {
+        "tags": [
+          "Subscribers"
+        ],
+        "summary": "Get all subcribers in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          }
+        }
+      }
+    },
+    "/subscriber": {
+      "post": {
+        "tags": [
+          "Subscribers"
+        ],
+        "description": "Create new admin in system",
+        "parameters": [
+          {
+            "name": "admin",
+            "in": "body",
+            "description": "Admin that we want to create",
+            "schema": {
+              "$ref": "#/definitions/Subcriber"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New user is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/subscriber/getUserProfile/{id}": {
+      "get": {
+        "tags": [
+          "Subscribers"
+        ],
+        "description": "Create new admin in system",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "get info user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New user is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/subscriber/uploadProfilePic": {
+      "post": {
+        "tags": [
+          "Subscribers"
+        ],
+        "description": "upload Profile Pic",
+        "parameters": [
+          {
+            "name": "file",
+            "in": "formData",
+            "description": "Profile pic of user",
+            "type": "file"
+          },
+          {
+            "name": "userID",
+            "in": "formData",
+            "description": "",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New user is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/subscriber/update": {
+      "post": {
+        "tags": [
+          "Subscribers"
+        ],
+        "description": "Create new admin in system",
+        "parameters": [
+          {
+            "name": "admin",
+            "in": "body",
+            "description": "Admin that we want to create",
+            "schema": {
+              "$ref": "#/definitions/UpdateUser"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New user is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/subscriber/deleteById": {
+      "get": {
+        "tags": [
+          "Subscribers"
+        ],
+        "description": "Remove User in system",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "id",
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New document is created",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/plan": {
+      "post": {
+        "tags": [
+          "Plans"
+        ],
+        "description": "Create new plan in system",
+        "parameters": [
+          {
+            "name": "plan",
+            "in": "body",
+            "description": "plan that we want to create",
+            "schema": {
+              "$ref": "#/definitions/Plan"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New plan is created",
+            "schema": {
+              "$ref": "#/definitions/Plan"
+            }
+          }
+        }
+      }
+    } ,
+    "/plan/list": {
+      "get": {
+        "tags": [
+          "Plans"
+        ],
+        "summary": "Get all plans in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Plan"
+            }
+          }
+        }
+      }
+    },
+    "/plan/update": {
+      "post": {
+        "tags": [
+          "Plans"
+        ],
+        "description": "update plan in system",
+        "parameters": [
+          {
+            "name": "plan",
+            "in": "body",
+            "description": "plan that we want to create",
+            "schema": {
+              "$ref": "#/definitions/UpdatePlan"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New plan is created",
+            "schema": {
+              "$ref": "#/definitions/UpdatePlan"
+            }
+          }
+        }
+      }
+    },
+    "/subscription": {
+      "post": {
+        "tags": [
+          "Subscription"
+        ],
+        "description": "Create new subscription in system",
+        "parameters": [
+          {
+            "name": "subscription",
+            "in": "body",
+            "description": "subscription that we want to create",
+            "schema": {
+              "$ref": "#/definitions/Subscription"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "New Subscription is created",
+            "schema": {
+              "$ref": "#/definitions/Subscription"
+            }
+          }
+        }
+      }
+    },
+    "/subscription/list": {
+      "get": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Get all subscription in system",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Subscription"
+            }
+          }
+        }
+      }
+    } 
+  },
+  "definitions": {
+    "User": {
+      "required": [
+        "name",
+        "email",
+        "password",
+        "isSuperAdmin",
+        "permissions"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "isSuperAdmin": {
+          "type": "boolean"
+        },
+        "personalProfile": {
+          "type": "object",
+          "salutation": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "fatherName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "placeofBirth": {
+            "type": "string"
+          },
+          "nationality": {
+            "type": "string"
+          },
+          "religion": {
+            "type": "string"
+          },
+          "caste": {
+            "type": "string"
+          },
+          "motherTongue": {
+            "type": "string"
+          },
+          "dateofBirth": {
+            "type": "string"
+          },
+          "dateofBirthActual": {
+            "type": "string"
+          },
+          "age": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "bloodGroup": {
+            "type": "string"
+          },
+          "maritalStatus": {
+            "type": "boolean"
+          },
+          "weddingAnniversary": {
+            "type": "string"
+          },
+          "differentlyAbled": {
+            "type": "string"
+          },
+          "smoker": {
+            "type": "boolean"
+          },
+          "aadhaarCardNumber": {
+            "type": "string"
+          },
+          "aadhaarCardName": {
+            "type": "string"
+          },
+          "hobbies": {
+            "type": "string"
+          },
+          "empTag": {
+            "type": "string"
+          }
+        },
+        "contactDeatils": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "UpdateUser": {
+      "required": [],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "_id": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "isSuperAdmin": {
+          "type": "boolean"
+        },
+        "personalProfile": {
+          "type": "object",
+          "salutation": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "middleName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "fatherName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "placeofBirth": {
+            "type": "string"
+          },
+          "nationality": {
+            "type": "string"
+          },
+          "religion": {
+            "type": "string"
+          },
+          "caste": {
+            "type": "string"
+          },
+          "motherTongue": {
+            "type": "string"
+          },
+          "dateofBirth": {
+            "type": "string"
+          },
+          "dateofBirthActual": {
+            "type": "string"
+          },
+          "age": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "bloodGroup": {
+            "type": "string"
+          },
+          "maritalStatus": {
+            "type": "boolean"
+          },
+          "weddingAnniversary": {
+            "type": "string"
+          },
+          "differentlyAbled": {
+            "type": "string"
+          },
+          "smoker": {
+            "type": "boolean"
+          },
+          "aadhaarCardNumber": {
+            "type": "string"
+          },
+          "aadhaarCardName": {
+            "type": "string"
+          },
+          "hobbies": {
+            "type": "string"
+          },
+          "empTag": {
+            "type": "string"
+          }
+        },
+        "contactDeatils": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "Users": {
+      "type": "array",
+      "$ref": "#/definitions/User"
+    },
+    "Admin": {
+      "required": [
+        "name",
+        "email",
+        "password",
+        "isSuperAdmin",
+        "permissions"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "isSuperAdmin": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Login": {
+      "required": [
+        "name",
+        "email",
+        "password",
+        "isSuperAdmin",
+        "permissions"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Books": {
+      "required": [
+        "bookName"
+      ],
+      "properties": {
+        "bookName": {
+          "type": "string"
+        },
+        "pricing": {
+          "type": "number"
+        },
+        "bookDetails": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "attachment": {
+          "type": "string"
+        },
+        "createDate": {
+          "type": "number"
+        },
+        "updateDate": {
+          "type": "number"
+        }
+      }
+    },
+    "news": {
+      "required": [
+        "newsName"
+      ],
+      "properties": {
+        "newsName": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "newsDetails": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "attachment": {
+          "type": "string"
+        },
+        "createDate": {
+          "type": "number"
+        },
+        "updateDate": {
+          "type": "number"
+        }
+      }
+    },
+    "Subcriber": {
+      "required": [
+        "name",
+        "mobile"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "subcriptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "email": {
+          "type": "string"
+        },
+        "fatherName": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "city": {
+          "type": "string"
+        },
+        "mobile": {
+          "type": "number"
+        },
+        "pinCode": {
+          "type": "number"
+        },
+        "state": {
+          "type": "number"
+        }
+      }
+    },
+    "UpdateCategory" : {
+      "required": [
+        "_id"
+      ],
+      "properties": {
+      "value": {
+        "type": "string"
+      }, 
+      "label" : {
+        "type": "string"
+      }, 
+      "_id" : {
+        "type": "string"
+      }
+    }
+  },
+  "Plan":  {
+    "required": [
+      "name",
+      "email",
+      "password",
+      "isSuperAdmin",
+      "permissions"
+    ],
+    "properties": {
+      "planId": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string"
+      },
+      "createdBy": {
+        "type": "string"
+      },
+      "price": {
+        "type": "number"
+      },
+      "books":  {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "duration": {
+        "type": "number"
+      },
+      "description": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  },
+  "UpdatePlan":  {
+    "required": [
+      "_id"
+    ],
+    "properties": {
+      "_id": {
+        "type": "string"
+      },
+      "planId": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string"
+      },
+      "createdBy": {
+        "type": "string"
+      },
+      "price": {
+        "type": "number"
+      },
+      "books":  {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "duration": {
+        "type": "number"
+      },
+      "description": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  },
+   "Category" : {
+    "required": [
+     
+    ],
+    "properties": {
+    "value": {
+      "type": "string"
+    }, 
+    "label" : {
+      "type": "string"
+    }
+  }
+},
+"Subscription": {
+  "required": [
+     
+  ],
+  "properties": {
+  "subscriberId": {
+    "type": "string"
+  }, 
+  "givenBy" : {
+    "type": "string"
+  }, 
+  "startDate" : {
+    "type": "number"
+  }, 
+  "endDate" : {
+    "type": "number"
+  },
+  "active": {
+    "type": "boolean"
+  },
+  "plans": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  }
+}
+},
+    "schemes": [
+      "http"
+    ],
+    "consumes": [
+      "application/json",
+      "multipart/form-data"
+    ],
+    "produces": [
+      "application/json"
+    ]
+  }
+}
