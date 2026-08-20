@@ -21,7 +21,7 @@ let path = require('path');
 var cron = require('node-cron');
 const { validateSubscription } = require('./schedular');
 
-const port = 3002;
+const port = process.env.PORT || 3002;
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 1000000}));
 app.use((req, res, next) => {
