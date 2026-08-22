@@ -206,86 +206,102 @@ router.post("/update", isAuth, (req, res, next) => {
         res.sendStatus(400);
     }
 })
+function buildAddressQuery(body) {
+    const query = { active: true };
+    if (body.admin) {
+        query.createdBy = body.admin;
+    }
+    if (body.state) {
+        query.state = { $in: String(body.state).split(',').filter(Boolean) };
+    }
+    if (body.city) {
+        query.city = { $in: String(body.city).split(',').filter(Boolean) };
+    }
+    if (body.bookId) {
+        query.bookId = body.bookId;
+    }
+    if (body.startDate && body.endDate) {
+        const startDate = new Date(new Date(body.startDate).setHours(0, 0, 0, 0));
+        startDate.setDate(startDate.getDate() + 1);
+        const endDate = new Date(new Date(body.endDate).setHours(23, 59, 59, 999));
+        endDate.setDate(endDate.getDate() + 1);
+        query.updateDate = {
+            $gte: startDate.toISOString(),
+            $lt: endDate.toISOString(),
+        };
+    }
+    return query;
+}
+
+function toAddressLabels(rows, forPdf) {
+    const labels = [];
+    for (const row of rows) {
+        if (!row.deliveryAddress) {
+            continue;
+        }
+        const addr = typeof row.deliveryAddress.toObject === 'function'
+            ? row.deliveryAddress.toObject()
+            : { ...row.deliveryAddress };
+        if (forPdf && addr.fatherName) {
+            addr.name = `${addr.name || ''} S/O ${addr.fatherName}`;
+        }
+        addr.displayId = `${String(row.name || '').slice(0, 2)} ${row.displayId || ''}`.trim();
+        labels.push(addr);
+    }
+    return labels;
+}
+
+async function findAddressLabels(body, forPdf) {
+    const query = buildAddressQuery(body);
+    const rows = await Subscription.find(query).sort({ city: 1 });
+    return toAddressLabels(rows, forPdf);
+}
+
+/**
+ * Address labels for the UI (same filters as PDF)
+ * @method: POST
+ */
+router.post("/list/address/search", isAuth, async function (req, res) {
+    try {
+        const data = await findAddressLabels(req.body, false);
+        res.status(200).json(Response.createResponse(
+            Response.RequestStatus.Success,
+            data.length ? "Address list" : "No address found.",
+            data,
+            data.length,
+        ));
+    } catch (err) {
+        console.error('Address search failed:', err);
+        res.status(500).json(Response.createResponse(Response.RequestStatus.Fail, err.message));
+    }
+});
+
 /**
  * Subscribers
  * @purpose: This Rest API  used to  get Subscriber list
  * @method: GET
  */
 router.post("/list/address", isAuth, async function (req, res, next) {
-
-
-    // const listOfSubs = await Subscription.find({});
-    // listOfSubs.forEach(async function (res){
-    //         const subsInfo = await Subscriber.findById(res.subscriberId);
-    //         let update = {};
-    //         update['displayId'] =  subsInfo.subscriberId;
-    //         const updated = await Subscription.findByIdAndUpdate(res._id, update);
-    //         console.log(updated);
-    // })
-
-    let query = {}
-    if (req.body.admin) {
-        query.createdBy = req.body.admin
-    }
-    if (req.body.state){
-        query.state =  { $in: req.body.state.split(',') }
-    }
-    if (req.body.city)
-        query.city = { $in: req.body.city.split(',') }
-    if (req.body.bookId)
-        query.bookId = req.body.bookId
-    if (req.body.startDate && req.body.endDate) {
-           let  startDate = new Date(new Date(req.body.startDate).setHours(00, 00, 00))
-        startDate.setDate(startDate.getDate() + 1);  
-        startDate = startDate.toISOString();   
-        let  endDate = new Date(new Date(req.body.endDate).setHours(23, 59, 59))
-        endDate.setDate(endDate.getDate() + 1);  
-        endDate = endDate.toISOString();   
-        query.updateDate = {
-            $gte: startDate,
-            $lt: endDate
-        }
-    }
-    query.active = true
-    console.log(query)
-    var suceess = await Subscription.find(query).sort({
-        city: 1
-    });
-    console.log(suceess.length)
-        let temp = [];
-        suceess.forEach(res => {
-		console.log(res.deliveryAddress.fatherName)
-            if (res.deliveryAddress.fatherName && res.deliveryAddress.fatherName) {
-                res.deliveryAddress.name = res.deliveryAddress.name + ' S/O ' + res.deliveryAddress.fatherName;
-            }
-            if (res.deliveryAddress.address.includes("#")) {
-                res.deliveryAddress.address = res.deliveryAddress.address;
-            }
-            res.deliveryAddress.address = res.deliveryAddress.address;
-            res.deliveryAddress.displayId = res.name.slice(0,2)+' '+res.displayId;
-            temp.push(res.deliveryAddress)
-        })
+    try {
+        const temp = await findAddressLabels(req.body, true);
         const pdfData = {
             name: "address",
             date: new Date(),
-            collection: temp
-        }
-        console.log(temp)
-        try {
-            const pdfPath = await createPDF(pdfData);
-            console.log('write  file done' + pdfPath)
-            var file = fs.createReadStream(pdfPath);
-            var stat = fs.statSync(pdfPath);
-            res.setHeader('Content-Length', stat.size);
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
-            file.pipe(res);
-        } catch (err) {
-            console.error('PDF generation failed:', err);
-            res.status(500).json({
-                error: 'PDF generation failed. Install Chrome libraries on the server (libatk1.0).',
-            });
-        }
+            collection: temp,
+        };
+        const pdfPath = await createPDF(pdfData);
+        const file = fs.createReadStream(pdfPath);
+        const stat = fs.statSync(pdfPath);
+        res.setHeader('Content-Length', stat.size);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
+        file.pipe(res);
+    } catch (err) {
+        console.error('PDF generation failed:', err);
+        res.status(500).json({
+            error: 'PDF generation failed. Install Chrome libraries on the server (libatk1.0).',
+        });
+    }
 })
 const itemsPerRow = 6; // Number of data items to display in a row
 const rowsPerPage = 9; // Number of rows to display per page
