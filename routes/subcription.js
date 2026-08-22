@@ -271,14 +271,21 @@ router.post("/list/address", isAuth, async function (req, res, next) {
             collection: temp
         }
         console.log(temp)
-        const pdfPath = await createPDF(pdfData);
-        console.log('write  file done' + pdfPath)
-        var file = fs.createReadStream(pdfPath);
-        var stat = fs.statSync(pdfPath);
-        res.setHeader('Content-Length', stat.size);
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
-        file.pipe(res);
+        try {
+            const pdfPath = await createPDF(pdfData);
+            console.log('write  file done' + pdfPath)
+            var file = fs.createReadStream(pdfPath);
+            var stat = fs.statSync(pdfPath);
+            res.setHeader('Content-Length', stat.size);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
+            file.pipe(res);
+        } catch (err) {
+            console.error('PDF generation failed:', err);
+            res.status(500).json({
+                error: 'PDF generation failed. Install Chrome libraries on the server (libatk1.0).',
+            });
+        }
 })
 const itemsPerRow = 6; // Number of data items to display in a row
 const rowsPerPage = 9; // Number of rows to display per page
@@ -363,6 +370,7 @@ async function createPDF(data) {
     milis = milis.getTime();
     console.log('time')
 
+    fs.mkdirSync('pdf', { recursive: true });
     var pdfPath = path.join('pdf', `${data.name}-${milis}.pdf`);
     console.log('pdf path' + pdfPath)
 
