@@ -380,8 +380,13 @@ async function createPDF(data) {
     }
 
     const browser = await puppeteer.launch({
-        args: ['--no-sandbox'],
-        headless: true
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+        ],
+        headless: true,
     });
     console.log("file writing stared")
     var page = await browser.newPage();
