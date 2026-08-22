@@ -233,6 +233,20 @@ function buildAddressQuery(body) {
     return query;
 }
 
+function formatFeeClosure(endDate) {
+    if (endDate == null || endDate === '') {
+        return '';
+    }
+    const date = new Date(typeof endDate === 'number' ? endDate : Date.parse(String(endDate)));
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+}
+
 function toAddressLabels(rows, forPdf) {
     const labels = [];
     for (const row of rows) {
@@ -246,6 +260,8 @@ function toAddressLabels(rows, forPdf) {
             addr.name = `${addr.name || ''} S/O ${addr.fatherName}`;
         }
         addr.displayId = `${String(row.name || '').slice(0, 2)} ${row.displayId || ''}`.trim();
+        addr.endDate = row.endDate;
+        addr.feeClosure = formatFeeClosure(row.endDate);
         labels.push(addr);
     }
     return labels;

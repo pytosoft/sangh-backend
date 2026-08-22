@@ -15,7 +15,7 @@
 
 }
 .card {
-				width: 200px;
+				width: 240px;
 				background-color: rgb(255, 255, 255);
 				border-radius: 15px;
 				box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
@@ -71,7 +71,10 @@ margin-bottom: 10px
 			<div class="page">
 		{{#each collection}}
 		 <div class="card">
-			{{this.displayId}} <br>
+			<div style="display:flex;justify-content:space-between;gap:6px;font-weight:600;">
+				<span>{{this.displayId}}</span>
+				{{#if this.feeClosure}}<span>Fee Closure - {{this.feeClosure}}</span>{{/if}}
+			</div>
 			{{this.name}} <br>
 			{{this.address}}<br>
 			{{this.city}} {{this.state}} - {{this.pinCode}}<br>
